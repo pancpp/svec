@@ -69,10 +69,10 @@ static struct node *get_node_at(svec_list self, size_t index) {
                                  : get_node_from_back(self, index);
 }
 
-svec_list svec_list_new(size_t item_size) {
+svec_list svec_list_new(size_t data_size) {
   struct svec_list *list = svec_malloc(sizeof(struct svec_list));
   if (list) {
-    list->data_size = item_size;
+    list->data_size = data_size;
     list->count = 0;
     list->front = list->back = NULL;
   }
