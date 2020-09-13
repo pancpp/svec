@@ -87,11 +87,17 @@ void svec_list_delete(svec_list self) {
 }
 
 void *svec_list_front(svec_list self) {
-  return self->front;
+  if (self->front) {
+    return self->front->data;
+  }
+  return NULL;
 }
 
 void *svec_list_back(svec_list self) {
-  return self->back;
+  if (self->back) {
+    return self->back->data;
+  }
+  return NULL;
 }
 
 void *svec_list_at(svec_list self, size_t index) {
