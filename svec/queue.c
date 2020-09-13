@@ -9,6 +9,7 @@
 #include "svec/queue.h"
 #include <errno.h>
 #include <stdlib.h>
+#include <string.h>
 #include "svec/svec.h"
 
 struct node {
