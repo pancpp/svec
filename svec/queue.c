@@ -105,6 +105,11 @@ void svec_queue_pop(svec_queue self) {
     struct node* nn = self->front->next;
     delete_node(self->front);
     self->front = nn;
+    --self->size;
+
+    if (self->size == 0) {
+      self->back = NULL;
+    }
   }
 }
 
