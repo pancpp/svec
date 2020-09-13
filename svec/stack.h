@@ -10,6 +10,7 @@
 #ifndef SVEC_STACK_H_
 #define SVEC_STACK_H_
 
+#include <stdbool.h>
 #include <stddef.h>
 
 typedef struct svec_stack* svec_stack;

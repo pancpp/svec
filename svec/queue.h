@@ -10,6 +10,7 @@
 #ifndef SVEC_QUEUE_H_
 #define SVEC_QUEUE_H_
 
+#include <stdbool.h>
 #include <stddef.h>
 
 typedef struct svec_queue* svec_queue;

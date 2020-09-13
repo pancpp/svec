@@ -125,5 +125,3 @@ void svec_queue_clear(svec_queue self) {
   self->front = self->back = NULL;
   self->size = 0;
 }
-
-#endif  // SVEC_QUEUE_H_
