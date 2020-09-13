@@ -4,7 +4,7 @@
  * @author Leyuan Pan
  * @date Sep 11, 2020
  *
- * @brief The doubly-linked list in C.
+ * @brief The doubly-linked list.
  */
 
 #ifndef SVEC_LIST_H_
