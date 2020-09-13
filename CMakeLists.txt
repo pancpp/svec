@@ -5,7 +5,7 @@ project(svec LANGUAGES C)
 option(BUILD_TESTS "Build testing codes" OFF)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(SRCS svec/svec.c svec/list.c svec/queue.c svec/stack.c)
+set(SRCS svec/svec.c svec/list.c svec/queue.c svec/stack.c svec/vector.c)
 
 add_library(svec ${SRCS})
 

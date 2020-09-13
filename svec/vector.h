@@ -50,17 +50,17 @@ void svec_vector_erase(svec_vector self, size_t index);
 void svec_vector_erase_range(svec_vector self, size_t beg, size_t end);
 
 /// @brief Insert `data` at position `index`.
-int svec_vector_insert(svec_vector self, size_t index, void* data);
+int svec_vector_insert(svec_vector self, size_t index, const void* data);
 
 /// @brief Insert [`data_beg`, `data_end`) at position `index` where `data_end`
 /// is exclusive.
-int svec_vector_insert_range(svec_vector self, size_t index, void* data_beg,
-                             void* data_end);
+int svec_vector_insert_range(svec_vector self, size_t index,
+                             const void* data_beg, const void* data_end);
 
 int svec_vector_insert_items(svec_vector self, size_t index, const void* data,
                              size_t num_items);
 
-int svec_vector_push_back(svec_vector self, void* data);
+int svec_vector_push_back(svec_vector self, const void* data);
 void svec_vector_pop_back(svec_vector self);
 
 int svec_vector_resize(svec_vector self, size_t new_size);

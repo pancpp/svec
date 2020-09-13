@@ -73,13 +73,15 @@ size_t svec_vector_capacity(svec_vector self) {
   return self->capacity;
 }
 
-size_t svec_vector_reserve(svec_vector self, size_t new_cap) {
+int svec_vector_reserve(svec_vector self, size_t new_cap) {
   if (new_cap > self->capacity) {
 #ifdef SVEC_REALLOC
     void* new_data = svec_realloc(self->data, new_cap * self->data_size);
     if (new_data) {
       self->data = new_data;
       self->capacity = new_cap;
+    } else {
+      return ENOMEM;
     }
 #else
     void* new_data = svec_malloc(new_cap * self->data_size);
@@ -88,9 +90,13 @@ size_t svec_vector_reserve(svec_vector self, size_t new_cap) {
       svec_free(self->data);
       self->data = new_data;
       self->capacity = new_cap;
+    } else {
+      return ENOMEM;
     }
 #endif
   }
+
+  return 0;
 }
 
 void svec_vector_shrink_to_fit(svec_vector self) {
@@ -171,7 +177,7 @@ int svec_vector_insert_items(svec_vector self, size_t index, const void* data,
   return 0;
 }
 
-int svec_vector_push_back(svec_vector self, void* data) {
+int svec_vector_push_back(svec_vector self, const void* data) {
   if (!self->data) {
     self->data = svec_malloc(self->data_size);
     if (!self->data) {
@@ -200,5 +206,5 @@ void svec_vector_pop_back(svec_vector self) {
 }
 
 int svec_vector_resize(svec_vector self, size_t new_size) {
-  self->size = self->new_size;
+  self->size = new_size;
 }
