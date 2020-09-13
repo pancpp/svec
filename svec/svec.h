@@ -10,6 +10,7 @@
 
 #include <stddef.h>
 
+// Memory management
 struct svec_mem {
   void* (*malloc)(size_t size);
   void (*free)(void* ptr);
