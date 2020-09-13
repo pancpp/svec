@@ -1,1 +1,1 @@
-# SVEC - Simple Vector, a collection of basic containers in C.
+## SVEC - Simple Vector, a collection of basic containers in C.
