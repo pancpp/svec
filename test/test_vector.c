@@ -14,8 +14,17 @@ struct data {
   int val;
 };
 
+static void print_vector(svec_vector vec) {
+  printf("%zu/%zu: ", svec_vector_size(vec), svec_vector_capacity(vec));
+  for (int i = 0; i < svec_vector_size(vec); ++i) {
+    printf("%d ", *(int*)svec_vector_at(vec, i));
+  }
+  printf("\n");
+}
+
 static void test1() {
   int errc = 0;
+  int a;
 
   svec_vector vec = svec_vector_new(sizeof(int));
 
@@ -29,27 +38,57 @@ static void test1() {
     errc = 2;
     goto fini;
   }
+
+  ////////////////
+  svec_vector_resize(vec, 10);
+  if (svec_vector_size(vec) != 10) {
+    errc = 11;
+    goto fini;
+  }
+  svec_vector_clear(vec);
+  svec_vector_shrink_to_fit(vec);
+  if (!svec_vector_empty(vec)) {
+    errc = 1;
+    goto fini;
+  }
+  if (svec_vector_size(vec) != 0) {
+    errc = 2;
+    goto fini;
+  }
   ////////////////
   // 5 2 3
-  int a;
   a = 1;
   svec_vector_push_back(vec, &a);
+  print_vector(vec);  // 1
+
   a = 2;
   svec_vector_push_back(vec, &a);
+  print_vector(vec);  // 1 2
+
   a = 3;
   svec_vector_push_back(vec, &a);
+  print_vector(vec);  // 1 2 3
+
   a = 4;
   svec_vector_push_back(vec, &a);
+  print_vector(vec);  // 1 2 3 4
 
   svec_vector_pop_back(vec);
+  print_vector(vec);  // 1 2 3
+
   svec_vector_erase(vec, 0);
+  print_vector(vec);  // 2 3
 
   a = 5;
   svec_vector_insert(vec, 0, &a);
+  print_vector(vec);  // 5 2 3
+
   a = 6;
   svec_vector_insert(vec, 0, &a);
+  print_vector(vec);  // 6 5 2 3
 
   svec_vector_erase(vec, 0);
+  print_vector(vec);  // 5 2 3
 
   if (svec_vector_empty(vec)) {
     errc = 3;
@@ -60,11 +99,7 @@ static void test1() {
     goto fini;
   }
 
-  int* data = (int*)svec_vector_data(vec);
-  for (int i = 0; i < 3; ++i) {
-    printf("%d ", data[i]);
-  }
-  printf("\n");
+  print_vector(vec);
 
   if (*(int*)svec_vector_at(vec, 0) != 5) {
     errc = 5;

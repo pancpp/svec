@@ -122,7 +122,7 @@ void svec_vector_erase(svec_vector self, size_t index) {
   if (is_legal_index(self, index)) {
     memmove(self->data + index * self->data_size,
             self->data + (index + 1) * self->data_size,
-            self->size - (index + 1));
+            (self->size - (index + 1)) * self->data_size);
     --self->size;
   }
 }
@@ -167,7 +167,8 @@ int svec_vector_insert_items(svec_vector self, size_t index, const void* data,
       }
     }
     memmove(self->data + (index + num_items) * self->data_size,
-            self->data + index * self->data_size, num_items * self->data_size);
+            self->data + index * self->data_size,
+            (self->size - index) * self->data_size);
     memcpy(self->data + index * self->data_size, data,
            num_items * self->data_size);
 
@@ -206,5 +207,12 @@ void svec_vector_pop_back(svec_vector self) {
 }
 
 int svec_vector_resize(svec_vector self, size_t new_size) {
+  if (new_size > self->capacity) {
+    int rc = svec_vector_reserve(self, new_size + 1);
+    if (rc) {
+      return rc;
+    }
+  }
   self->size = new_size;
+  return 0;
 }
