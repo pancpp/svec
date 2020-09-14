@@ -2,144 +2,55 @@
  * @copyright Copyright (C) 2020 Leyuan Pan. All rights reserved.
  *
  * @author Leyuan Pan
- * @date Sep 04, 2020
+ * @date Sep 13, 2020
  *
- * @brief Circular buffer based on static memory.
+ * @file
+ * @brief Circular buffer.
  */
 
 #ifndef SVEC_CBUF_H_
 #define SVEC_CBUF_H_
 
 #include <stddef.h>
-#include <string.h>
 
-#define svec_t(type)         \
-  struct {                   \
-    type *p_start_;          \
-    type *p_finish_;         \
-    type *p_beg_of_storage_; \
-    type *p_end_of_storage_; \
-  }
+typedef struct svec_cbuf* svec_cbuf;
 
-#define svec_init(sv, p_storage, sz_storage)                                  \
-  do {                                                                        \
-    (sv).p_beg_of_storage_ = (typeof((sv).p_beg_of_storage_))(                \
-        ((size_t)(p_storage) + sizeof(*((sv).p_beg_of_storage_)) - 1) /       \
-        sizeof(*((sv).p_beg_of_storage_)) *                                   \
-        sizeof(*((sv).p_beg_of_storage_)));                                   \
-    (sv).p_end_of_storage_ =                                                  \
-        (typeof((sv).p_end_of_storage_))(((size_t)(p_storage) + sz_storage) / \
-                                         sizeof(*((sv).p_end_of_storage_)) *  \
-                                         sizeof(*((sv).p_end_of_storage_)));  \
-    (sv).p_start_ = (sv).p_beg_of_storage_;                                   \
-    (sv).p_finish_ = (sv).p_beg_of_storage_;                                  \
-  } while (0)
+// Constructor and destructor
+svec_cbuf svec_cbuf_new(size_t data_size, size_t capacity);
+void svec_cbuf_delete(svec_cbuf self);
 
-#define svec_reinit(sv, p_storage, sz_storage, preserve)
+// Element access
+void* svec_cbuf_at(svec_cbuf self, size_t index);
+void* svec_cbuf_front(svec_cbuf self);
+void* svec_cbuf_back(svec_cbuf self);
 
-#define svec_push_back(sv, a)                       \
-  do {                                              \
-    *(sv).p_finish_++ = a;                          \
-    if ((sv).p_finish_ == (sv).p_end_of_storage_) { \
-      (sv).p_finish_ = (sv).p_beg_of_storage_;      \
-    }                                               \
-  } while (0)
+// Capacity
+bool svec_cbuf_empty(svec_cbuf self);
+bool svec_cbuf_full(svec_cbuf self);
+size_t svec_cbuf_size(svec_cbuf self);
+size_t svec_cbuf_capacity(svec_cbuf self);
+int svec_cbuf_reserve(svec_cbuf self, size_t new_cap);
 
-#define svec_pop_back(sv)                            \
-  do {                                               \
-    if (--(sv).p_finish_ < (sv).p_beg_of_storage_) { \
-      (sv).p_finish_ = (sv).p_end_of_storage_ - 1;   \
-    }                                                \
-  } while (0)
+// Modifiers
+void svec_cbuf_clear(svec_cbuf self);
 
-#define svec_push_front(sv, a)                      \
-  do {                                              \
-    if (--(sv).p_start_ < (sv).p_beg_of_storage_) { \
-      (sv).p_start_ = (sv).p_end_of_storage_ - 1;   \
-    }                                               \
-    *(sv).p_start_ = a;                             \
-  } while (0)
+void svec_cbuf_erase(svec_cbuf self, size_t index);
+void svec_cbuf_erase_range(svec_cbuf self, size_t beg, size_t end);
+void svec_cbuf_erase_items(svec_cbuf self, size_t index, size_t num_items);
 
-#define svec_pop_front(sv)                           \
-  do {                                               \
-    if (++(sv).p_start_ == (sv).p_end_of_storage_) { \
-      (sv).p_start_ = (sv).p_beg_of_storage_;        \
-    }                                                \
-  } while (0)
+int svec_cbuf_insert(svec_cbuf self, size_t index, const void* data);
+int svec_cbuf_insert_range(svec_cbuf self, size_t index, const void* data_beg,
+                           const void* data_end);
+int svec_cbuf_insert_items(svec_cbuf self, size_t index, const void* data,
+                           size_t num_items);
 
-#define svec_insert(sv, i, a) \
-  do {                        \
-  } while (0)
+int svec_cbuf_push_front(svec_cbuf self, const void* data);
+int svec_cbuf_push_back(svec_cbuf self, const void* data);
 
-#define svec_erase(sv, i) \
-  do {                    \
-  } while (0)
+void svec_cbuf_pop_front(svec_cbuf self);
+void svec_cbuf_pop_back(svec_cbuf self);
 
-#define svec_clear(sv) ((sv).p_finish_ = (sv).p_start_)
-
-#define svec_resize(sv, sz)                                                 \
-  do {                                                                      \
-    (sv).p_finish_ = (sv).p_start_ + (sz);                                  \
-    if ((sv).p_finish_ > (sv).p_end_of_storage_) {                          \
-      (sv).p_finish_ =                                                      \
-          (sv).p_finish_ - (sv).p_end_of_storage_ + (sv).p_beg_of_storage_; \
-    }                                                                       \
-  } while (0)
-
-#define svec_front(sv) (*((sv).p_start_))
-
-#define svec_back(sv)                                                        \
-  (*((sv).p_finish_ == (sv).p_beg_of_storage_ ? ((sv).p_end_of_storage_ - 1) \
-                                              : ((sv).p_finish_ - 1)))
-
-#define svec_data(sv) ((sv).p_start_)
-
-#define svec_rdata(sv)                                                     \
-  ((sv).p_finish_ == (sv).p_beg_of_storage_ ? ((sv).p_end_of_storage_ - 1) \
-                                            : ((sv).p_finish_ - 1))
-
-#define svec_at(sv, i)                                                         \
-  (*((sv).p_start_ + i >= (sv).p_end_of_storage_                               \
-         ? (sv).p_start_ + i - (sv).p_end_of_storage_ + (sv).p_beg_of_storage_ \
-         : (sv).p_start_ + i))
-
-#define svec_pat(sv, i)                                                        \
-  ((sv).p_start_ + i >= (sv).p_end_of_storage_                                 \
-       ? ((sv).p_start_ + i - (sv).p_end_of_storage_ + (sv).p_beg_of_storage_) \
-       : ((sv).p_start_ + i))
-
-#define svec_size(sv)                                 \
-  ((sv).p_finish_ < (sv).p_start_                     \
-       ? (((sv).p_finish_ - (sv).p_beg_of_storage_) + \
-          ((sv).p_end_of_storage_ - (sv).p_start_))   \
-       : ((sv).p_finish_ - (sv).p_start_))
-
-#define svec_capacity(sv) ((sv).p_end_of_storage_ - (sv).p_beg_of_storage_ - 1)
-
-#define svec_empty(sv) ((sv).p_start_ == (sv).p_finish_)
-
-#define svec_full(sv)                            \
-  (((sv).p_start_ == (sv).p_beg_of_storage_ &&   \
-    (sv).p_finish_ == (sv).p_end_of_storage_) || \
-   ((sv).p_start_ == (sv).p_finish_ + 1))
-
-#define __svec_swap__(a, b) \
-  do {                      \
-    void *tmp = a;          \
-    a = b;                  \
-    b = tmp;                \
-  } while (0)
-
-#define svec_swap(sv_a, sv_b)                                      \
-  do {                                                             \
-    __svec_swap__(sv_a.p_start_, sv_b.p_start_);                   \
-    __svec_swap__(sv_a.p_finish_, sv_b.p_finish_);                 \
-    __svec_swap__(sv_a.p_beg_of_storage_, sv_b.p_beg_of_storage_); \
-    __svec_swap__(sv_a.p_end_of_storage_, sv_b.p_end_of_storage_); \
-  } while (0)
-
-#define svec_copy(src_sv, src_beg, src_end, dst_sv, dst_beg)
-
-#define svec_fill(sv, i_beg, i_end, a)
+int svec_vector_resize(svec_cbuf self, size_t new_size);
+void svec_vector_set(svec_cbuf self, size_t index, const void* data);
 
 #endif  // SVEC_CBUF_H_
