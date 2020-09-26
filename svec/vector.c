@@ -115,7 +115,8 @@ void svec_vector_shrink_to_fit(svec_vector self) {
 }
 
 void svec_vector_clear(svec_vector self) {
-  self->size = 0;
+  self->size = self->capacity = 0;
+  svec_free(self->data);
 }
 
 void svec_vector_erase(svec_vector self, size_t index) {
