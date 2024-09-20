@@ -19,7 +19,7 @@ static inline bool is_legal_index(svec_vector_t v, size_t index) {
 }
 
 svec_vector_t svec_vector_new(size_t data_size) {
-  svec_vector_t vec = svec_malloc(sizeof(svec_vector_t));
+  svec_vector_t vec = svec_malloc(sizeof(struct svec_vector));
   if (vec) {
     vec->data = NULL;
     vec->size = vec->capacity = 0;
