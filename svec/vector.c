@@ -1,8 +1,5 @@
 /**
- * @copyright Copyright (C) 2020 Leyuan Pan. All rights reserved.
- *
- * @author Leyuan Pan
- * @date Sep 12, 2020
+ * @copyright Copyright (C) 2020-2024 Leyuan Pan. All rights reserved.
  */
 #include "svec/vector.h"
 #include <errno.h>
@@ -17,12 +14,12 @@ struct svec_vector {
   size_t data_size;
 };
 
-static inline bool is_legal_index(svec_vector self, size_t index) {
-  return index < self->size;
+static inline bool is_legal_index(svec_vector_t v, size_t index) {
+  return index < v->size;
 }
 
-svec_vector svec_vector_new(size_t data_size) {
-  struct svec_vector* vec = svec_malloc(sizeof(struct svec_vector));
+svec_vector_t svec_vector_new(size_t data_size) {
+  svec_vector_t vec = svec_malloc(sizeof(svec_vector_t));
   if (vec) {
     vec->data = NULL;
     vec->size = vec->capacity = 0;
@@ -31,65 +28,65 @@ svec_vector svec_vector_new(size_t data_size) {
   return vec;
 }
 
-void svec_vector_delete(svec_vector self) {
-  if (self) {
-    svec_vector_clear(self);
-    svec_free(self);
+void svec_vector_delete(svec_vector_t v) {
+  if (v) {
+    svec_vector_clear(v);
+    svec_free(v);
   }
 }
 
-void* svec_vector_at(svec_vector self, size_t index) {
-  if (!is_legal_index(self, index)) {
+void* svec_vector_at(svec_vector_t v, size_t index) {
+  if (!is_legal_index(v, index)) {
     return NULL;
   }
 
-  return self->data + index * self->data_size;
+  return v->data + index * v->data_size;
 }
 
-void* svec_vector_front(svec_vector self) {
-  return self->data;
+void* svec_vector_front(svec_vector_t v) {
+  return v->data;
 }
 
-void* svec_vector_back(svec_vector self) {
-  if (self->size) {
-    return self->data + (self->size - 1) * self->data_size;
+void* svec_vector_back(svec_vector_t v) {
+  if (v->size) {
+    return v->data + (v->size - 1) * v->data_size;
   }
   return NULL;
 }
 
-void* svec_vector_data(svec_vector self) {
-  return self->data;
+void* svec_vector_data(svec_vector_t v) {
+  return v->data;
 }
 
-bool svec_vector_empty(svec_vector self) {
-  return self->size == 0;
+bool svec_vector_empty(svec_vector_t v) {
+  return v->size == 0;
 }
 
-size_t svec_vector_size(svec_vector self) {
-  return self->size;
+size_t svec_vector_size(svec_vector_t v) {
+  return v->size;
 }
 
-size_t svec_vector_capacity(svec_vector self) {
-  return self->capacity;
+size_t svec_vector_capacity(svec_vector_t v) {
+  return v->capacity;
 }
 
-int svec_vector_reserve(svec_vector self, size_t new_cap) {
-  if (new_cap > self->capacity) {
+int svec_vector_reserve(svec_vector_t v, size_t new_cap) {
+  if (new_cap > v->capacity) {
 #ifdef SVEC_REALLOC
-    void* new_data = svec_realloc(self->data, new_cap * self->data_size);
+    void* new_data = svec_realloc(v->data, new_cap * v->data_size);
     if (new_data) {
-      self->data = new_data;
-      self->capacity = new_cap;
+      v->data = new_data;
+      v->capacity = new_cap;
     } else {
       return ENOMEM;
     }
 #else
-    void* new_data = svec_malloc(new_cap * self->data_size);
+    void* new_data = svec_malloc(new_cap * v->data_size);
     if (new_data) {
-      memcpy(new_data, self->data, self->size * self->data_size);
-      svec_free(self->data);
-      self->data = new_data;
-      self->capacity = new_cap;
+      memcpy(new_data, v->data, v->size * v->data_size);
+      svec_free(v->data);
+      v->data = new_data;
+      v->capacity = new_cap;
     } else {
       return ENOMEM;
     }
@@ -99,121 +96,118 @@ int svec_vector_reserve(svec_vector self, size_t new_cap) {
   return 0;
 }
 
-void svec_vector_shrink_to_fit(svec_vector self) {
-  if (self->size == 0) {
-    svec_free(self->data);
-    self->data = NULL;
-    self->capacity = 0;
-  } else if (self->capacity > self->size) {
-    void* new_data = svec_malloc(self->size * self->data_size);
+void svec_vector_shrink_to_fit(svec_vector_t v) {
+  if (v->size == 0) {
+    svec_free(v->data);
+    v->data = NULL;
+    v->capacity = 0;
+  } else if (v->capacity > v->size) {
+    void* new_data = svec_malloc(v->size * v->data_size);
     if (new_data) {
-      memcpy(new_data, self->data, self->size * self->data_size);
-      self->data = new_data;
-      self->capacity = self->size;
+      memcpy(new_data, v->data, v->size * v->data_size);
+      v->data = new_data;
+      v->capacity = v->size;
     }
   }
 }
 
-void svec_vector_clear(svec_vector self) {
-  self->size = self->capacity = 0;
-  svec_free(self->data);
+void svec_vector_clear(svec_vector_t v) {
+  v->size = v->capacity = 0;
+  svec_free(v->data);
 }
 
-void svec_vector_erase(svec_vector self, size_t index) {
-  if (is_legal_index(self, index)) {
-    memmove(self->data + index * self->data_size,
-            self->data + (index + 1) * self->data_size,
-            (self->size - (index + 1)) * self->data_size);
-    --self->size;
+void svec_vector_erase(svec_vector_t v, size_t index) {
+  if (is_legal_index(v, index)) {
+    memmove(v->data + index * v->data_size,
+            v->data + (index + 1) * v->data_size,
+            (v->size - (index + 1)) * v->data_size);
+    --v->size;
   }
 }
 
-void svec_vector_erase_range(svec_vector self, size_t beg, size_t end) {
-  if (end > beg && is_legal_index(self, beg) && is_legal_index(self, end - 1)) {
-    memmove(self->data + beg * self->data_size,
-            self->data + end * self->data_size,
-            (self->size - end) * self->data_size);
-    self->size -= end - beg;
+void svec_vector_erase_range(svec_vector_t v, size_t beg, size_t end) {
+  if (end > beg && is_legal_index(v, beg) && is_legal_index(v, end - 1)) {
+    memmove(v->data + beg * v->data_size, v->data + end * v->data_size,
+            (v->size - end) * v->data_size);
+    v->size -= end - beg;
   }
 }
 
-int svec_vector_insert(svec_vector self, size_t index, const void* data) {
-  return svec_vector_insert_items(self, index, data, 1);
+int svec_vector_insert(svec_vector_t v, size_t index, const void* data) {
+  return svec_vector_insert_items(v, index, data, 1);
 }
 
-int svec_vector_insert_range(svec_vector self, size_t index,
+int svec_vector_insert_range(svec_vector_t v, size_t index,
                              const void* data_beg, const void* data_end) {
-  return svec_vector_insert_items(self, index, data_beg,
-                                  (data_end - data_beg) / self->data_size);
+  return svec_vector_insert_items(v, index, data_beg,
+                                  (data_end - data_beg) / v->data_size);
 }
 
-int svec_vector_insert_items(svec_vector self, size_t index, const void* data,
+int svec_vector_insert_items(svec_vector_t v, size_t index, const void* data,
                              size_t num_items) {
-  if (index > self->size) {
+  if (index > v->size) {
     return EINVAL;
   }
 
-  if (!self->data) {
-    self->data = svec_malloc(num_items * self->data_size);
-    if (!self->data) {
+  if (!v->data) {
+    v->data = svec_malloc(num_items * v->data_size);
+    if (!v->data) {
       return ENOMEM;
     }
-    self->size = self->capacity = num_items;
-    memcpy(self->data, data, num_items * self->data_size);
+    v->size = v->capacity = num_items;
+    memcpy(v->data, data, num_items * v->data_size);
   } else {
-    if (self->size + num_items > self->capacity) {
-      int rc = svec_vector_reserve(self, self->size + num_items + 1);
+    if (v->size + num_items > v->capacity) {
+      int rc = svec_vector_reserve(v, v->size + num_items + 1);
       if (rc) {
         return rc;
       }
     }
-    memmove(self->data + (index + num_items) * self->data_size,
-            self->data + index * self->data_size,
-            (self->size - index) * self->data_size);
-    memcpy(self->data + index * self->data_size, data,
-           num_items * self->data_size);
+    memmove(v->data + (index + num_items) * v->data_size,
+            v->data + index * v->data_size, (v->size - index) * v->data_size);
+    memcpy(v->data + index * v->data_size, data, num_items * v->data_size);
 
-    self->size += num_items;
+    v->size += num_items;
   }
 
   return 0;
 }
 
-int svec_vector_push_back(svec_vector self, const void* data) {
-  if (!self->data) {
-    self->data = svec_malloc(self->data_size);
-    if (!self->data) {
+int svec_vector_push_back(svec_vector_t v, const void* data) {
+  if (!v->data) {
+    v->data = svec_malloc(v->data_size);
+    if (!v->data) {
       return ENOMEM;
     }
-    self->size = self->capacity = 1;
-    memcpy(self->data, data, self->data_size);
+    v->size = v->capacity = 1;
+    memcpy(v->data, data, v->data_size);
   } else {
-    if (self->size == self->capacity) {
-      int rc = svec_vector_reserve(self, self->capacity * 2);
+    if (v->size == v->capacity) {
+      int rc = svec_vector_reserve(v, v->capacity * 2);
       if (rc) {
         return rc;
       }
     }
-    memcpy(self->data + self->size * self->data_size, data, self->data_size);
-    ++self->size;
+    memcpy(v->data + v->size * v->data_size, data, v->data_size);
+    ++v->size;
   }
 
   return 0;
 }
 
-void svec_vector_pop_back(svec_vector self) {
-  if (self->size > 0) {
-    --self->size;
+void svec_vector_pop_back(svec_vector_t v) {
+  if (v->size > 0) {
+    --v->size;
   }
 }
 
-int svec_vector_resize(svec_vector self, size_t new_size) {
-  if (new_size > self->capacity) {
-    int rc = svec_vector_reserve(self, new_size + 1);
+int svec_vector_resize(svec_vector_t v, size_t new_size) {
+  if (new_size > v->capacity) {
+    int rc = svec_vector_reserve(v, new_size + 1);
     if (rc) {
       return rc;
     }
   }
-  self->size = new_size;
+  v->size = new_size;
   return 0;
 }

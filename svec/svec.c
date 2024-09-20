@@ -1,14 +1,11 @@
 /**
- * @copyright Copyright (C) 2020 Leyuan Pan. All rights reserved.
- *
- * @author Leyuan Pan
- * @date Sep 04, 2020
+ * @copyright Copyright (C) 2020-2024 Leyuan Pan. All rights reserved.
  */
 
 #include "svec/svec.h"
 #include <stdlib.h>
 
-struct svec_mem g_svec_mem = {
+svec_mem_t g_svec_mem = {
     .malloc = malloc,
     .free = free,
 #ifdef SVEC_REALLOC
