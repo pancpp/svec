@@ -1,11 +1,11 @@
 /**
- * @copyright Copyright (C) 2020-2024 Leyuan Pan. All rights reserved.
+ * @copyright Copyright (C) 2020 Leyuan Pan. All rights reserved.
  */
-#include "svec/vector.h"
+#include "vector.h"
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
-#include "svec/svec.h"
+#include "svec.h"
 
 struct svec_vector {
   void* data;

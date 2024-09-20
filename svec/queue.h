@@ -2,9 +2,6 @@
  * @copyright Copyright (C) 2020 Leyuan Pan. All rights reserved.
  *
  * @file
- * @author Leyuan Pan
- * @date Sep 12, 2020
- *
  * @brief The first-in first-out (FIFO) queue.
  */
 #ifndef SVEC_QUEUE_H_

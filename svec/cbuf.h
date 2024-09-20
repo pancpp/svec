@@ -1,9 +1,6 @@
 /**
  * @copyright Copyright (C) 2020 Leyuan Pan. All rights reserved.
  *
- * @author Leyuan Pan
- * @date Sep 13, 2020
- *
  * @file
  * @brief Circular buffer.
  */
@@ -11,6 +8,7 @@
 #ifndef SVEC_CBUF_H_
 #define SVEC_CBUF_H_
 
+#include <stdbool.h>
 #include <stddef.h>
 
 typedef struct svec_cbuf* svec_cbuf;

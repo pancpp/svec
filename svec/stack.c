@@ -1,16 +1,14 @@
 /**
  * @copyright Copyright (C) 2020 Leyuan Pan. All rights reserved.
  *
- * @author Leyuan Pan
- * @date Sep 12, 2020
- *
+ * @file
  * @brief The last-in first-out (LIFO) stack.
  */
-#include "svec/stack.h"
+#include "stack.h"
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
-#include "svec/svec.h"
+#include "svec.h"
 
 struct node {
   struct node* next;

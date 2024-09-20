@@ -1,5 +1,5 @@
 /**
- * @copyright Copyright (C) 2020-2024 Leyuan Pan. All rights reserved.
+ * @copyright Copyright (C) 2020 Leyuan Pan. All rights reserved.
  *
  * @file
  * @brief The dynamic size vector.

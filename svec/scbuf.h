@@ -1,9 +1,7 @@
 /**
  * @copyright Copyright (C) 2020 Leyuan Pan. All rights reserved.
  *
- * @author Leyuan Pan
- * @date Sep 04, 2020
- *
+ * @file
  * @brief Circular buffer based on static memory.
  */
 
@@ -23,10 +21,12 @@
 
 #define svec_scbuf_init(sv, p_storage, sz_storage)                            \
   do {                                                                        \
-    (sv).p_beg_of_storage_ = (typeof((sv).p_beg_of_storage_))(                \
-        ((size_t)(p_storage) + sizeof(*((sv).p_beg_of_storage_)) - 1) /       \
-        sizeof(*((sv).p_beg_of_storage_)) *                                   \
-        sizeof(*((sv).p_beg_of_storage_)));                                   \
+    (sv).p_beg_of_storage_ =                                                  \
+        (typeof((sv).p_beg_of_storage_))(((size_t)(p_storage) +               \
+                                          sizeof(*((sv).p_beg_of_storage_)) - \
+                                          1) /                                \
+                                         sizeof(*((sv).p_beg_of_storage_)) *  \
+                                         sizeof(*((sv).p_beg_of_storage_)));  \
     (sv).p_end_of_storage_ =                                                  \
         (typeof((sv).p_end_of_storage_))(((size_t)(p_storage) + sz_storage) / \
                                          sizeof(*((sv).p_end_of_storage_)) *  \

@@ -1,8 +1,8 @@
 /**
- * @copyright Copyright (C) 2020-2024 Leyuan Pan. All rights reserved.
+ * @copyright Copyright (C) 2020 Leyuan Pan. All rights reserved.
  */
 
-#include "svec/svec.h"
+#include "svec.h"
 #include <stdlib.h>
 
 svec_mem_t g_svec_mem = {

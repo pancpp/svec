@@ -1,8 +1,5 @@
 /**
  * @copyright Copyright (C) 2020 Leyuan Pan. All rights reserved.
- *
- * @author Leyuan Pan
- * @date Sep 11, 2020
  */
 #include "svec/list.h"
 #include <errno.h>

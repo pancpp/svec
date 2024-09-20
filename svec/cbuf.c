@@ -1,12 +1,9 @@
 /**
  * @copyright Copyright (C) 2020 Leyuan Pan. All rights reserved.
- *
- * @author Leyuan Pan
- * @date Sep 13, 2020
  */
-#include "svec/cbuf.h"
+#include "cbuf.h"
 #include <string.h>
-#include "svec/svec.h"
+#include "svec.h"
 
 struct svec_cbuf {
   void* data;
