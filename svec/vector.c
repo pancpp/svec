@@ -105,6 +105,7 @@ void svec_vector_shrink_to_fit(svec_vector_t v) {
     void* new_data = svec_malloc(v->size * v->data_size);
     if (new_data) {
       memcpy(new_data, v->data, v->size * v->data_size);
+      svec_free(v->data);
       v->data = new_data;
       v->capacity = v->size;
     }
